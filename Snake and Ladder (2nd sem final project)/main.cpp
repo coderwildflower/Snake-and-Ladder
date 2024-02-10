@@ -17,11 +17,13 @@ private:
 
 	//Constructor
 public:
-	Button(float posX, float posY, float width, float height, std::string text,sf::Color idleColor, sf::Color hoverColor, sf::Color clickColor, std::string imagePath = "") {
+	Button(float posX, float posY, float width, float height, std::string text, sf::Color idleColor, sf::Color hoverColor, sf::Color clickColor, std::string imagePath = "") {
 
 		shape.setSize(sf::Vector2f(width, height));
 		shape.setPosition(sf::Vector2f(posX, posY));
-		shape.setFillColor(this->btnIdleColor);
+		shape.setFillColor(btnIdleColor);
+		btnHoverColor = hoverColor;
+		btnClickColor = clickColor;
 
 		textFont.loadFromFile("assets/OpenSans-Regular.ttf");
 		btnText.setFont(textFont);
@@ -48,24 +50,25 @@ public:
 	bool isMouseOver(sf::RenderWindow& window)
 	{
 		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-		sf::Vector2f btnSize = shape.getSize();
-		sf::Vector2f btnPos = shape.getPosition();
-
-		if (mousePos.x >= btnPos.x && mousePos.x <= btnPos.x + btnSize.x &&
-			mousePos.y >= btnPos.y && mousePos.y <= btnPos.y + btnSize.y)
+		sf::FloatRect buttonRect = shape.getGlobalBounds();
+		if (buttonRect.contains(sf::Vector2f(mousePos)))
 			return true;
+		else {
+			shape.setFillColor(btnIdleColor);
+			return false;
+		}
 	}
 
-	void SetIdleColor() {
-		shape.setFillColor(btnIdleColor);
-	}
-
-	void SetHoverColor() {
-		shape.setFillColor(btnHoverColor);
-	}
-
-	void SetclickColor() {
-		shape.setFillColor(btnClickColor);
+	void UpdateColor(sf::RenderWindow& window)
+	{
+		if (isMouseOver(window))
+		{
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			{
+				shape.setFillColor(btnClickColor);
+			}
+			else shape.setFillColor(btnHoverColor);
+		}
 	}
 
 	void RenderButton(sf::RenderWindow& window)
@@ -80,12 +83,12 @@ public:
 int main()
 {
 	Dice _dice;
-	Button _diceRollBtn(450,800,100,100,"ROLL",sf::Color::White, sf::Color::Cyan,sf::Color::Green);
+	Button _diceRollBtn(450, 800, 100, 100, "ROLL", sf::Color::White, sf::Color::Cyan, sf::Color::Green);
 
 	// Create the main game window
 	sf::RenderWindow window(sf::VideoMode(900, 900), "Snake and Ladder");
 
-	//Set all gameobjects texutre and its height and width -------------------------------------------------------------------
+	//Set all gameobject's texutre and its height and width -------------------------------------------------------------------
 	sf::Texture boardTexture;
 	sf::Sprite board;
 
@@ -99,34 +102,48 @@ int main()
 	board.setTexture(boardTexture);
 	board.setScale(boardWidth / board.getLocalBounds().width, boardHeight / board.getLocalBounds().height);
 	board.setPosition(450 - boardWidth / 2, 20);
+	bool canClick = true;
+	// ------------------------------------------------------------------------------------------------------------------------
 
-	 // ------------------------------------------------------------------------------------------------------------------------
-
-	 //Main Game Loop
+	//Main Game Loop
 	while (window.isOpen())
 	{
+		
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
-			if (event.type == sf::Event::Closed)
-				window.close();
-
-			//Mouse position and click handler ---------------------------------------------------------
-			if (_diceRollBtn.isMouseOver(window))
+			switch (event.type)
 			{
-				_diceRollBtn.SetHoverColor();
-				if (event.type == sf::Mouse::isButtonPressed(sf::Mouse::Left))
+				
+			case sf::Event::Closed:
+				window.close();
+				break;
+
+				
+			case sf::Event::MouseButtonPressed:
+				if (event.mouseButton.button == sf::Mouse::Left && canClick)
 				{
-					std::cout<<_dice.GetRandomNum();
-					_diceRollBtn.SetclickColor();
+					//Dice Roll Button
+					if (_diceRollBtn.isMouseOver(window))
+					{
+						int diceNumber = _dice.GetRandomNum();
+						std::cout << diceNumber;
+						canClick = false;
+					}
 				}
-			}
-			else _diceRollBtn.SetIdleColor();
+
+			case sf::Event::MouseButtonReleased:
+				canClick = true;
+					break;
+
 			
+			default:
+				break;
+			}
 		}
-
-
+	
 		//--------------------------------------------------------------------------------------------
+		_diceRollBtn.UpdateColor(window);
 		window.clear();
 		window.draw(board);
 		_diceRollBtn.RenderButton(window);
