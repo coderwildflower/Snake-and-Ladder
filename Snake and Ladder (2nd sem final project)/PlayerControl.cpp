@@ -1,12 +1,8 @@
 
 class PlayerControl {
 
-	int currentPosition;
-
-
-public :
-	void MovePlayer(int pos)
+	void MovePlayer(int number)
 	{
-		currentPosition = pos;
+		
 	}
 };
