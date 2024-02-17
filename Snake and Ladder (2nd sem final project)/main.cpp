@@ -3,74 +3,77 @@
 
 #include "Dice.h"
 #include "Button.h"
+#include "Board.h"
+#include "Player.h"
 
 int main()
 {
-	Dice _dice;
-	Button _diceRollBtn(450, 800, 100, 100, "ROLL", sf::Color::White, sf::Color::Cyan, sf::Color::Green,"");
-
 	// Create the main game window
 	sf::RenderWindow window(sf::VideoMode(900, 900), "Snake and Ladder");
 
-	//Set all gameobject's texutre and its height and width -------------------------------------------------------------------
-	sf::Texture boardTexture;
-	sf::Sprite board;
+	Dice _dice;
+	Button _diceRollBtn(450, 800, 100, 100, "ROLL", sf::Color::White, sf::Color::Cyan, sf::Color::Green, "");
 
-	float boardWidth = 700;
-	float boardHeight = 700;
+	Board _board;
+	_board.InitializeBoard(window);
 
-	boardTexture.loadFromFile("assets/textures/board.png");
+	Player _player;
+	_player.InitializePlayer();
+	_player.playerPos = 0;
 
-	//board sprite setup in scene ---------------------
-	boardTexture.setSmooth(true);
-	board.setTexture(boardTexture);
-	board.setScale(boardWidth / board.getLocalBounds().width, boardHeight / board.getLocalBounds().height);
-	board.setPosition(450 - boardWidth / 2, 20);
 	bool canClick = true;
-	// ------------------------------------------------------------------------------------------------------------------------
 
-	//Main Game Loop
+	//Main Game Loop ------------------------------------------------------------------------------------------
 	while (window.isOpen())
 	{
-		
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
 			switch (event.type)
 			{
-				
+
 			case sf::Event::Closed:
 				window.close();
 				break;
 
-				
 			case sf::Event::MouseButtonPressed:
+
 				if (event.mouseButton.button == sf::Mouse::Left && canClick)
 				{
-					//Dice Roll Button
+						//sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+						//std::cout << "Mouse Position: (" << mousePosition.x << ", " << mousePosition.y << ")" << std::endl;
+					
 					if (_diceRollBtn.isMouseOver(window))
 					{
 						int diceNumber = _dice.GetRandomNum();
-						std::cout << diceNumber;
+						_player.MovePlayer(diceNumber);
+
+						std::cout << diceNumber << std::endl;
+						std::cout << _player.playerPos ;
+						std::cout << "\n";
+
 						canClick = false;
 					}
 				}
 
 			case sf::Event::MouseButtonReleased:
 				canClick = true;
-					break;
+				break;
 
-			
 			default:
 				break;
 			}
 		}
-	
-		//--------------------------------------------------------------------------------------------
-		_diceRollBtn.UpdateColor(window);
+
+		//-------------------------------------------------------------------------------------------------
+
 		window.clear();
-		window.draw(board);
+
+		window.draw(_board.boardSprite);
+		_diceRollBtn.UpdateColor(window);
 		_diceRollBtn.RenderButton(window);
+		window.draw(_player.playerSprite);
+
 		window.display();
 	}
 
