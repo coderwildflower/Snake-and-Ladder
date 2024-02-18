@@ -19,7 +19,6 @@ int main()
 
 	Player _player;
 	_player.InitializePlayer();
-	_player.playerPos = 0;
 
 	bool canClick = true;
 
@@ -40,17 +39,15 @@ int main()
 
 				if (event.mouseButton.button == sf::Mouse::Left && canClick)
 				{
-						//sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-						//std::cout << "Mouse Position: (" << mousePosition.x << ", " << mousePosition.y << ")" << std::endl;
-					
 					if (_diceRollBtn.isMouseOver(window))
 					{
 						int diceNumber = _dice.GetRandomNum();
 						_player.MovePlayer(diceNumber);
 
-						std::cout << diceNumber << std::endl;
-						std::cout << _player.playerPos ;
+						std::cout << diceNumber;
 						std::cout << "\n";
+						std::cout << _player.playerPos;
+						std::cout << "\n\n";
 
 						canClick = false;
 					}

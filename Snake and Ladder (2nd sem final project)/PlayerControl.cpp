@@ -10,6 +10,8 @@ void  Player::InitializePlayer()
 	playerSprite.setTexture(playerTexture);
 	playerSprite.setScale(20 / playerSprite.getLocalBounds().width,25 / playerSprite.getLocalBounds().height);
 	playerSprite.setPosition(20, 700);
+
+	playerPos = 0;
 }
 
 
@@ -17,7 +19,6 @@ void Player::MovePlayer(int diceNum)
 {
 	playerPos += diceNum;
 	sf::Vector2f finalPos = BoardCellPosition[playerPos - 1];
-	sf::Vector2f playerScale = playerSprite.getScale();
-	finalPos.x -= playerScale.x / 2;
+	finalPos.x -= 40;
 	playerSprite.setPosition(finalPos);
 }

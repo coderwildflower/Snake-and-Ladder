@@ -4,8 +4,8 @@ sf::Vector2f BoardCellPosition[100];
 
 void Board::SetGridCells(sf::RenderWindow& window)
 {
-	initialX = 100;
-	initialY = 700;
+	initialX = 170;
+	initialY = 680;
 	index = 0;
 	bool isReverse = false;
 
@@ -13,14 +13,18 @@ void Board::SetGridCells(sf::RenderWindow& window)
 	{
 		for (int j = 0; j < 10; j++)
 		{
+			//local x posiiton on last cell
+			if (index % 10 != 0)
+			{
+				if (!isReverse)
+					initialX += 70;
+				else initialX -= 70;
+			}
+		
 			BoardCellPosition[index] = sf::Vector2f(initialX,initialY);
-
-			if (!isReverse)
-				initialX += 75;
-			else initialX -= 75;
-
 			index++;
 		}
+	
 		isReverse = !isReverse;
 		initialY -= 72;
 	}
