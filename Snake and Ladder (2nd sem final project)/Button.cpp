@@ -4,7 +4,7 @@
 #include "Button.h"
 
 	//Constructor
-Button::Button(float posX, float posY, float width, float height, std::string text, sf::Color idleColor, sf::Color hoverColor, sf::Color clickColor, std::string imagePath = "") {
+Button::Button(float posX, float posY, float width, float height,float btnImgX,float btnImgY, std::string text, sf::Color idleColor, sf::Color hoverColor, sf::Color clickColor, std::string imagePath = "") {
 
 	shape.setSize(sf::Vector2f(width, height));
 	shape.setPosition(sf::Vector2f(posX, posY));
@@ -28,8 +28,7 @@ Button::Button(float posX, float posY, float width, float height, std::string te
 			std::cerr << "Failed to load texture!" << std::endl;
 
 		btnSprite.setTexture(btnTexture);
-		btnSprite.setPosition(posX, posY);
-		btnSprite.setScale(width / btnTexture.getSize().x / 2, height / btnTexture.getSize().y / 2);
+		btnSprite.setPosition(btnImgX, btnImgY);
 	}
 }
 

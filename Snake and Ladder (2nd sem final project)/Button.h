@@ -11,15 +11,13 @@ private:
 	sf::Color btnHoverColor;
 	sf::Color btnClickColor;
 	sf::Texture btnTexture;
-	sf::Sprite btnSprite;
-
-
+	
 public:
 	//constructor
-	Button(float, float , float , float , std::string , sf::Color , sf::Color , sf::Color , std::string );
+	Button(float, float , float , float ,float, float, std::string , sf::Color , sf::Color , sf::Color , std::string );
 
 	bool isMouseOver(sf::RenderWindow& window);
 	void UpdateColor(sf::RenderWindow& window);
 	void RenderButton(sf::RenderWindow& window);
-
+	sf::Sprite btnSprite;
 };

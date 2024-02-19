@@ -19,6 +19,7 @@ void Player::MovePlayer(int diceNum)
 {
 	playerPos += diceNum;
 	sf::Vector2f finalPos = BoardCellPosition[playerPos - 1];
-	finalPos.x -= 40;
+	finalPos.x -= 40; //centre the token wrt to board's square
 	playerSprite.setPosition(finalPos);
+	//playerSprite.move(2,0);
 }
