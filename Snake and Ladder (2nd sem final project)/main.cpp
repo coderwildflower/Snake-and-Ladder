@@ -17,7 +17,7 @@ int main()
 	Dice _dice;
 	_dice.InitializeDice();
 
-	Button _diceRollBtn(400, 750, 100, 100, 414 ,767, "ROLL", sf::Color::White, sf::Color::Cyan, sf::Color::Green, "assets/textures/Dice_static.png");
+	Button _diceRollBtn(400, 750, 100, 100, 414 ,767, "ROLL", sf::Color::White, sf::Color::Cyan, sf::Color::Green, "");
 	_diceRollBtn.btnSprite.setTextureRect((sf::IntRect(0, 0, 128.67, 69))); //x,y,w,h to show single image from texture grid
 
 	Board _board;
@@ -75,7 +75,6 @@ int main()
 		// ----------------------------------------------------------------------------------------------------
 
 		window.clear(sf::Color(55, 80, 82,255));
-
 
 		window.draw(_board.boardSprite);
 		_diceRollBtn.UpdateColor(window);

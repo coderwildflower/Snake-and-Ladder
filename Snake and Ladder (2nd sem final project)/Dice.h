@@ -4,11 +4,10 @@
 class Dice {
 
 	sf::Texture diceAnimTexture;
-	
 
 public:
-	sf::Sprite diceAnimSprite;
 	sf::IntRect diceRect;
+	sf::Sprite diceAnimSprite;
 	int GetRandomNum();
 	void RollDice(sf::Clock &clock);
 	void InitializeDice();
