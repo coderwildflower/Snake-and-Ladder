@@ -8,18 +8,52 @@ void  Player::InitializePlayer()
 	//player sprite setup in scene ---------------------
 	playerTexture.setSmooth(true);
 	playerSprite.setTexture(playerTexture);
-	playerSprite.setScale(20 / playerSprite.getLocalBounds().width,25 / playerSprite.getLocalBounds().height);
+	playerSprite.setScale(30 / playerSprite.getLocalBounds().width, 45 / playerSprite.getLocalBounds().height);
 	playerSprite.setPosition(20, 700);
 
 	playerPos = 0;
 }
 
-
-void Player::MovePlayer(int diceNum)
+sf::Vector2f Player::finalPos(int diceNum,Board& _board)
 {
+	sf::Vector2f pos;
+	bool foundSnakeorLadder = false;
 	playerPos += diceNum;
-	sf::Vector2f finalPos = BoardCellPosition[playerPos - 1];
-	finalPos.x -= 40; //centre the token wrt to board's square
-	playerSprite.setPosition(finalPos);
-	//playerSprite.move(2,0);
+
+	for (int i = 0; i < 8; i++)
+	{
+		if (playerPos - 1 == _board.ladderInitialIndex[i])
+		{
+			pos = _board.ladderFinalPosition[i];
+			foundSnakeorLadder = true;
+			playerPos = _board.ladderFinalIndex[i] + 1;
+			break;
+		}
+	}
+
+	if (!foundSnakeorLadder)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			if (playerPos - 1 == _board.snakeInitialIndex[i])
+			{
+				pos = _board.SnakeFinalPosition[i];
+				playerPos = _board.snakeFinalIndex[i] + 1;
+				foundSnakeorLadder = true;
+				break;
+			}
+		}
+
+	}
+
+	if (!foundSnakeorLadder) pos = BoardCellPosition[playerPos - 1];
+
+
+	return pos;
 }
+
+sf::Vector2f Player::lerp(const sf::Vector2f& start, const sf::Vector2f& end, float percent) {
+	return start + (end - start) * percent;
+}
+
+

@@ -13,18 +13,17 @@ void Board::SetGridCells(sf::RenderWindow& window)
 	{
 		for (int j = 0; j < 10; j++)
 		{
-			//local x posiiton on last cell
-			if (index % 10 != 0)
+			if (index % 10 != 0) //dont move x on last cell
 			{
 				if (!isReverse)
 					initialX += 70;
 				else initialX -= 70;
 			}
-		
-			BoardCellPosition[index] = sf::Vector2f(initialX,initialY);
+
+			BoardCellPosition[index] = sf::Vector2f(initialX - 50, initialY);
 			index++;
 		}
-	
+
 		isReverse = !isReverse;
 		initialY -= 72;
 	}
@@ -46,4 +45,15 @@ void Board::InitializeBoard(sf::RenderWindow& window)
 	boardSprite.setPosition(450 - boardWidth / 2, 20);
 
 	SetGridCells(window);
+
+	//set ladder x and y position
+	for (int i = 0; i < 8; i++)
+	{
+		ladderInitialPosition[i] = BoardCellPosition[ladderInitialIndex[i]];
+		ladderFinalPosition[i] = BoardCellPosition[ladderFinalIndex[i]];
+
+		SnakeInitialPosition[i] = BoardCellPosition[snakeInitialIndex[i]];
+		SnakeFinalPosition[i] = BoardCellPosition[snakeFinalIndex[i]];
+	}
+
 }

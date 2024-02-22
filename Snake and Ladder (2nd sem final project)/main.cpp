@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <algorithm>
 
 #include "Dice.h"
 #include "Button.h"
@@ -10,14 +11,17 @@ int main()
 {
 	// Create the main game window ---------------------------------------------------------------------------
 	sf::RenderWindow window(sf::VideoMode(900, 900), "Snake and Ladder");
-	sf::Clock gameClock;
 	window.setFramerateLimit(60);
+	float elaspedTime = 0;
+	float deltaTime = 0;
+	sf::Clock gameClock;
 	//--------------------------------------------------------------------------------------------------------
 
 	Dice _dice;
 	_dice.InitializeDice();
+	int diceNumber = 0;
 
-	Button _diceRollBtn(400, 750, 100, 100, 414 ,767, "ROLL", sf::Color::White, sf::Color::Cyan, sf::Color::Green, "");
+	Button _diceRollBtn(400, 750, 100, 100, 414, 767, "", sf::Color::White, sf::Color::Cyan, sf::Color::Green, "");
 	_diceRollBtn.btnSprite.setTextureRect((sf::IntRect(0, 0, 128.67, 69))); //x,y,w,h to show single image from texture grid
 
 	Board _board;
@@ -25,18 +29,21 @@ int main()
 
 	Player _player;
 	_player.InitializePlayer();
+	_player.startPlayerPosition.x = 20;
+	_player.startPlayerPosition.y = 700;
+	float percent = 0.f;
 
 	bool canClick = true;
+	bool isRolling = false;
 
 	//Main Game Loop ------------------------------------------------------------------------------------------
 	while (window.isOpen())
 	{
-		_dice.RollDice(gameClock);
-
+		deltaTime = gameClock.restart().asSeconds();
 		sf::Event event;
+
 		while (window.pollEvent(event))
 		{
-		
 			switch (event.type)
 			{
 
@@ -45,36 +52,64 @@ int main()
 				break;
 
 			case sf::Event::MouseButtonPressed:
-			
+
 				if (event.mouseButton.button == sf::Mouse::Left && canClick)
 				{
 					if (_diceRollBtn.isMouseOver(window))
 					{
-					
-						int diceNumber = _dice.GetRandomNum();
-						_player.MovePlayer(diceNumber);
-
-						std::cout << diceNumber;
-						std::cout << "\n";
-						std::cout << _player.playerPos;
-						std::cout << "\n\n";
-
+						isRolling = true;
 						canClick = false;
+
+						diceNumber = _dice.GetRandomNum();
+						//_dice.RollDice(elaspedTime);
+						_dice.diceAnimSprite.setTextureRect(_dice.diceFace[diceNumber - 1]);
+
+						_player.finalPlayerPosition = _player.finalPos(diceNumber,_board); //set x and y of target cell
+
+						std::cout << diceNumber << ": Dice Number";
+						std::cout << "\n";
+						std::cout << _player.playerPos << ": Player Position";
+						std::cout << "\n\n";
 					}
 				}
 
 			case sf::Event::MouseButtonReleased:
-				canClick = true;
+				//canClick = true;
 				break;
 
 			default:
 				break;
 			}
+
 		}
 
+		if (isRolling)
+		{
+			elaspedTime += deltaTime;
+		
+			percent = elaspedTime / 0.3;
+			percent = std::min(percent,1.f); //limit percant from 0 to 1
+		
+			_player.playerSprite.setPosition(_player.lerp(_player.startPlayerPosition, _player.finalPlayerPosition, percent));
+			if (percent > 0.95f)
+			{
+				sf::Vector2f tempPos = _player.finalPlayerPosition;
+				_player.playerSprite.setPosition(tempPos);
+				
+				_player.startPlayerPosition = _player.finalPlayerPosition;
+
+				//reset
+				elaspedTime = 0.00f;
+				percent = 0;
+				canClick = true;
+				isRolling = false;
+			}
+		
+		}
+		
 		// ----------------------------------------------------------------------------------------------------
 
-		window.clear(sf::Color(55, 80, 82,255));
+		window.clear(sf::Color(54, 54, 54,255));
 
 		window.draw(_board.boardSprite);
 		_diceRollBtn.UpdateColor(window);
@@ -83,6 +118,7 @@ int main()
 		window.draw(_dice.diceAnimSprite);
 
 		window.display();
+		
 	}
 
 	return 0;

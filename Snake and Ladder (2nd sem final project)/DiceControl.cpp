@@ -15,27 +15,40 @@ void Dice::InitializeDice()
 	diceAnimTexture.loadFromFile("assets/textures/Dice_static.png");
 	diceAnimSprite.setTexture(diceAnimTexture);
 	//diceAnimSprite.setScale(120 / diceAnimSprite.getLocalBounds().width, 80 / diceAnimSprite.getLocalBounds().height);
-	diceAnimSprite.setPosition(600, 767);
+	diceAnimSprite.setPosition(415, 767);
 	diceRect = sf::IntRect(0, 0, 70, 70);
 	diceAnimSprite.setTextureRect(diceRect);
+	SetDiceFace();
 }
 
-void Dice::RollDice(sf::Clock &_clock)
+void Dice::RollDice(float elaspedTime)
 {
-	float targetTime = 2;
+	float currentTime = 0;
+	float targetTime = 1;
 
-	if (_clock.getElapsedTime().asSeconds() > 0.5)
+	//elaspedTime = 0;
+	currentTime += elaspedTime;
+
+	if (currentTime <= targetTime)
 	{
-		if (diceRect.left >= 350){
+		if (diceRect.left >= 350) {
 			diceRect.left = 0;
-			
-		} 
-		else {
-
-			diceRect.left += 70;	
 		}
+		else diceRect.left += 70;
+
 		diceAnimSprite.setTextureRect(diceRect);
-		_clock.restart();
 	}
+
+	currentTime = 0;
+}
+
+void Dice::SetDiceFace()
+{
+	diceFace[0] = sf::IntRect(350, 0, 70, 70);
+	diceFace[1] = sf::IntRect(0, 0, 70, 70);
+	diceFace[2] = sf::IntRect(210, 0, 70, 70);
+	diceFace[3] = sf::IntRect(140, 0, 70, 70);
+	diceFace[4] = sf::IntRect(280, 0, 70, 70);
+	diceFace[5] = sf::IntRect(70, 0, 70, 70);
 }
 

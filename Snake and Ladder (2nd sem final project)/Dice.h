@@ -7,8 +7,10 @@ class Dice {
 
 public:
 	sf::IntRect diceRect;
+	sf::IntRect diceFace[6]; //store each dice face image to dispaly after dice roll ends
 	sf::Sprite diceAnimSprite;
 	int GetRandomNum();
-	void RollDice(sf::Clock &clock);
+	void RollDice(float);
 	void InitializeDice();
+	void SetDiceFace();
 };
