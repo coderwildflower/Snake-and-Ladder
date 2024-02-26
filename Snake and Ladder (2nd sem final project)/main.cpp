@@ -35,6 +35,7 @@ int main()
 
 	bool canClick = true;
 	bool isRolling = false;
+	bool canClimb = false;
 
 	//Main Game Loop ------------------------------------------------------------------------------------------
 	while (window.isOpen())
@@ -64,11 +65,11 @@ int main()
 						//_dice.RollDice(elaspedTime);
 						_dice.diceAnimSprite.setTextureRect(_dice.diceFace[diceNumber - 1]);
 
-						_player.finalPlayerPosition = _player.finalPos(diceNumber,_board); //set x and y of target cell
-
+						_player.setPos(1);
+						  
 						std::cout << diceNumber << ": Dice Number";
 						std::cout << "\n";
-						std::cout << _player.playerPos << ": Player Position";
+						std::cout << _player.playerPosIndex << ": Player Position";
 						std::cout << "\n\n";
 					}
 				}
@@ -86,30 +87,54 @@ int main()
 		if (isRolling)
 		{
 			elaspedTime += deltaTime;
-		
-			percent = elaspedTime / 0.3;
-			percent = std::min(percent,1.f); //limit percant from 0 to 1
-		
-			_player.playerSprite.setPosition(_player.lerp(_player.startPlayerPosition, _player.finalPlayerPosition, percent));
-			if (percent > 0.95f)
-			{
-				sf::Vector2f tempPos = _player.finalPlayerPosition;
-				_player.playerSprite.setPosition(tempPos);
-				
-				_player.startPlayerPosition = _player.finalPlayerPosition;
 
-				//reset
+			percent = elaspedTime / 0.3f;
+			percent = std::min(percent, 1.f); //limit percant from 0 to 1
+
+			//First Move normally according to dice roll number-----------------------
+			sf::Vector2f tempPos = BoardCellPosition[_player.playerPosIndex - 1];
+			_player.playerSprite.setPosition(_player.lerp(_player.startPlayerPosition, tempPos, percent)); 
+
+			if (percent > 0.99f && !canClimb)
+			{
+				_player.playerSprite.setPosition(tempPos);
+				_player.startPlayerPosition = tempPos;
+
 				elaspedTime = 0.00f;
 				percent = 0;
-				canClick = true;
-				isRolling = false;
+
+				_player.finalPlayerPosition = _player.finalPos(_board); //set x and y of target cell
+				if (_player.foundSnakeorLadder) canClimb = true; // check if snake or ladder is found
+				else {
+					canClick = true;
+					isRolling = false;
+				}
+
 			}
-		
+
+			//Then Climb or Fall if any snake or ladder is encountered
+			if (canClimb)
+			{
+				_player.playerSprite.setPosition(_player.lerp(_player.startPlayerPosition, _player.finalPlayerPosition, percent));
+				if (percent > 0.99f)
+				{
+					_player.playerSprite.setPosition(_player.finalPlayerPosition);
+					_player.startPlayerPosition = _player.finalPlayerPosition;
+
+					//reset
+					elaspedTime = 0.00f;
+					percent = 0;
+					canClick = true;
+					isRolling = false;
+					canClimb = false;
+				}
+			}
+
 		}
-		
+
 		// ----------------------------------------------------------------------------------------------------
 
-		window.clear(sf::Color(54, 54, 54,255));
+		window.clear(sf::Color(54, 54, 54, 255));
 
 		window.draw(_board.boardSprite);
 		_diceRollBtn.UpdateColor(window);
@@ -118,7 +143,7 @@ int main()
 		window.draw(_dice.diceAnimSprite);
 
 		window.display();
-		
+
 	}
 
 	return 0;

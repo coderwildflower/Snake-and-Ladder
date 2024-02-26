@@ -11,22 +11,27 @@ void  Player::InitializePlayer()
 	playerSprite.setScale(30 / playerSprite.getLocalBounds().width, 45 / playerSprite.getLocalBounds().height);
 	playerSprite.setPosition(20, 700);
 
-	playerPos = 0;
+	playerPosIndex = 0;
 }
 
-sf::Vector2f Player::finalPos(int diceNum,Board& _board)
+int ::Player::setPos(int diceNum)
+{
+	playerPosIndex += diceNum;
+	return playerPosIndex;
+}
+
+sf::Vector2f Player::finalPos(Board& _board)
 {
 	sf::Vector2f pos;
-	bool foundSnakeorLadder = false;
-	playerPos += diceNum;
-
+	foundSnakeorLadder = false;
+	
 	for (int i = 0; i < 8; i++)
 	{
-		if (playerPos - 1 == _board.ladderInitialIndex[i])
+		if (playerPosIndex - 1 == _board.ladderInitialIndex[i])
 		{
 			pos = _board.ladderFinalPosition[i];
 			foundSnakeorLadder = true;
-			playerPos = _board.ladderFinalIndex[i] + 1;
+			playerPosIndex = _board.ladderFinalIndex[i] + 1;
 			break;
 		}
 	}
@@ -35,19 +40,16 @@ sf::Vector2f Player::finalPos(int diceNum,Board& _board)
 	{
 		for (int i = 0; i < 8; i++)
 		{
-			if (playerPos - 1 == _board.snakeInitialIndex[i])
+			if (playerPosIndex - 1 == _board.snakeInitialIndex[i])
 			{
 				pos = _board.SnakeFinalPosition[i];
-				playerPos = _board.snakeFinalIndex[i] + 1;
+				playerPosIndex = _board.snakeFinalIndex[i] + 1;
 				foundSnakeorLadder = true;
 				break;
 			}
 		}
 
 	}
-
-	if (!foundSnakeorLadder) pos = BoardCellPosition[playerPos - 1];
-
 
 	return pos;
 }
