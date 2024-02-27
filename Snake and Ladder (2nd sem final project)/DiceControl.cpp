@@ -14,7 +14,6 @@ void Dice::InitializeDice()
 {
 	diceAnimTexture.loadFromFile("assets/textures/Dice_static.png");
 	diceAnimSprite.setTexture(diceAnimTexture);
-	//diceAnimSprite.setScale(120 / diceAnimSprite.getLocalBounds().width, 80 / diceAnimSprite.getLocalBounds().height);
 	diceAnimSprite.setPosition(415, 767);
 	diceRect = sf::IntRect(0, 0, 70, 70);
 	diceAnimSprite.setTextureRect(diceRect);

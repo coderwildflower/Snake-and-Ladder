@@ -150,12 +150,15 @@
     <ClCompile Include="DiceControl.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayerControl.cpp" />
+    <ClCompile Include="PlayerSwitchControl.cpp" />
+    <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Dice.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerSwitch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -32,7 +32,11 @@ void Board::SetGridCells(sf::RenderWindow& window)
 void Board::InitializeBoard(sf::RenderWindow& window)
 {
 	//Set board's texutre,its height and width and position in window -------------------------------------------------------------------
-
+	sf::Texture bgTexture;
+	sf::Sprite bgSprite;
+	bgTexture.loadFromFile("assets/textures/background.png");
+	bgSprite.setTexture(bgTexture);
+	bgSprite.setScale(900 / bgSprite.getLocalBounds().width, 900 / bgSprite.getLocalBounds().height);
 	float boardWidth = 700;
 	float boardHeight = 700;
 
