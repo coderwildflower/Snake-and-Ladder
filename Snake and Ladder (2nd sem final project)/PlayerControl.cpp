@@ -4,7 +4,6 @@
 void Player::InitializePlayer(int playerNum)
 {
 	playerPosIndex = 0;
-	foundSnakeorLadder = false;
 	SetPlayerTexture(playerNum);
 	SetPlayerPosition(playerNum);
 }
@@ -79,28 +78,29 @@ void SimpleMove()
 sf::Vector2f Player::finalPos(Board& _board)
 {
 	sf::Vector2f pos;
-	foundSnakeorLadder = false;
+	foundSnake = false;
+	foundLadder = false;
 	
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 8; i++) // check for ladder
 	{
 		if (playerPosIndex - 1 == _board.ladderInitialIndex[i])
 		{
 			pos = _board.ladderFinalPosition[i];
-			foundSnakeorLadder = true;
+			foundLadder = true;
 			playerPosIndex = _board.ladderFinalIndex[i] + 1;
 			break;
 		}
 	}
 
-	if (!foundSnakeorLadder)
+	if (!foundLadder)//if ladder not found check for snake
 	{
 		for (int i = 0; i < 8; i++)
 		{
 			if (playerPosIndex - 1 == _board.snakeInitialIndex[i])
 			{
 				pos = _board.SnakeFinalPosition[i];
+				foundSnake = true;
 				playerPosIndex = _board.snakeFinalIndex[i] + 1;
-				foundSnakeorLadder = true;
 				break;
 			}
 		}

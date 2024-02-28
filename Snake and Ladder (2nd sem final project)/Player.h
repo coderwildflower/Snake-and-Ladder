@@ -6,7 +6,8 @@ class Player {
 public:
 	int playerPosIndex;
 	int setPos(int);
-	bool foundSnakeorLadder;
+	bool foundSnake;
+	bool foundLadder;
 	sf::Texture playerTexture;
 	sf::Sprite playerSprite;
 	sf::Vector2f finalPlayerPosition;

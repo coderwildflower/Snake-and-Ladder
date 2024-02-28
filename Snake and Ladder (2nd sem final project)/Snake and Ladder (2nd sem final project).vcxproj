@@ -151,6 +151,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayerControl.cpp" />
     <ClCompile Include="PlayerSwitchControl.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +160,7 @@
     <ClInclude Include="Dice.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerSwitch.h" />
+    <ClInclude Include="Sound.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

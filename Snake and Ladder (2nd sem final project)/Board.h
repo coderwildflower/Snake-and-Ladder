@@ -24,5 +24,7 @@ public:
 	void SetGridCells(sf::RenderWindow& window);
 	void InitializeBoard(sf::RenderWindow& window);
 	sf::Sprite boardSprite;
+	sf::Texture bgTexture;
+	sf::Sprite bgSprite;
 };
 

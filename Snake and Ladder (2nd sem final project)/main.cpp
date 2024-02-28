@@ -7,6 +7,7 @@
 #include "Board.h"
 #include "Player.h"
 #include "PlayerSwitch.h"
+#include "Sound.h"
 
 int main()
 {
@@ -16,40 +17,46 @@ int main()
 	float elaspedTime = 0;
 	float deltaTime = 0;
 	sf::Clock gameClock;
-	
-	// Create DIce Object---------------
+
+	// Create DIce Object--------------------------
 	Dice _dice;
 	_dice.InitializeDice();
 	int diceNumber = 0;
 
-	//Create Dice Roll Button--------------
+	//Create Dice Roll Button------------------
 	Button _diceRollBtn(400, 750, 100, 100, 414, 767, "", sf::Color::White, sf::Color::Cyan, sf::Color::Green, "");
-	//_diceRollBtn.btnSprite.setTextureRect((sf::IntRect(0, 0, 128.67, 69))); //x,y,w,h to show single image from texture grid
 
 	//Create Snake and Ladder board----------------
 	Board _board;
 	_board.InitializeBoard(window);
 
-	//Setup total players ----------------------
-	PlayerManager manager;
-	manager.SetPlayer(4);
-	int turn = manager.playerTurn = 0;
+	Sound _sound;
+	_sound.loadAllAudio();
+
+	//Setup total players --------------------------
+	PlayerManager _manager;
+	_manager.SetPlayer(4);
+	int turn = _manager.playerTurn = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		manager.players[i].InitializePlayer(i);
+		_manager.players[i].InitializePlayer(i);
 	}
+	_manager.SetTurnArrow(turn);
+	_manager.displayArrow = true;
 
 	float percent = 0.f;
 
 	bool canClick = true;
 	bool isRolling = false;
-	bool canClimb = false;
+	bool ClimborFall = false;
 
 	//Main Game Loop ------------------------------------------------------------------------------------------
 	while (window.isOpen())
 	{
 		deltaTime = gameClock.restart().asSeconds();
 		sf::Event event;
+
+		_manager.AnimateArrow(deltaTime);
 
 		while (window.pollEvent(event))
 		{
@@ -66,17 +73,19 @@ int main()
 				{
 					if (_diceRollBtn.isMouseOver(window))
 					{
+						_sound.PlayDiceRoll();
+						_manager.displayArrow = false;
 						isRolling = true;
 						canClick = false;
 
 						diceNumber = _dice.GetRandomNum(); //get random number
 						//_dice.RollDice(elaspedTime);
 						_dice.diceAnimSprite.setTextureRect(_dice.diceFace[diceNumber - 1]); //set the dice face to the given number
-						manager.players[turn].setPos(diceNumber);//set the position of the player
-						  
+						_manager.players[turn].setPos(diceNumber);//set the position of the player
+
 						std::cout << diceNumber << ": Dice Number";
 						std::cout << "\n";
-						std::cout << manager.players[turn].playerPosIndex << ": Position of Player" << turn+1;
+						std::cout << _manager.players[turn].playerPosIndex << ": Position of Player" << turn + 1;
 						std::cout << "\n\n";
 					}
 				}
@@ -99,71 +108,82 @@ int main()
 			percent = std::min(percent, 1.f); //limit percant from 0 to 1
 
 			//First Move normally according to dice roll number-----------------------
-			sf::Vector2f tempPos = BoardCellPosition[manager.players[turn].playerPosIndex - 1];
-			manager.players[turn].playerSprite.setPosition(manager.players[turn].lerp(manager.players[turn].startPlayerPosition, tempPos, percent));
+			sf::Vector2f tempPos = BoardCellPosition[_manager.players[turn].playerPosIndex - 1];
+			_manager.players[turn].playerSprite.setPosition(_manager.players[turn].lerp(_manager.players[turn].startPlayerPosition, tempPos, percent));
 
-			if (percent > 0.99f && !canClimb)
+			if (percent > 0.99f && !ClimborFall)
 			{
-				manager.players[turn].playerSprite.setPosition(tempPos); //snap current pos to final pos at the end of percantage
-				manager.players[turn].startPlayerPosition = tempPos;
+				_manager.players[turn].playerSprite.setPosition(tempPos); //snap current pos to final pos at the end of percantage
+				_manager.players[turn].startPlayerPosition = tempPos;
 
 				elaspedTime = 0.00f;
 				percent = 0;
 
-				manager.players[turn].finalPlayerPosition = manager.players[turn].finalPos(_board); //set x and y of target cell
-				if (manager.players[turn].foundSnakeorLadder) canClimb = true; // check if snake or ladder is found
+				_manager.players[turn].finalPlayerPosition = _manager.players[turn].finalPos(_board); //set x and y of target cell
+
+				if (_manager.players[turn].foundLadder) // check if snake or ladder is found
+				{
+					_sound.PlayLadder();
+					ClimborFall = true;
+				}
+				else if (_manager.players[turn].foundSnake)
+				{
+					_sound.PlaySnake();
+					ClimborFall = true;
+				}
 				else {
 					canClick = true;
 					isRolling = false;
 
-					turn++;
+					turn++; //switch turn
 					if (turn > 3) turn = 0;
+					_manager.SetTurnArrow(turn);
+					_manager.displayArrow = true;
 				}
 
 			}
 
 			//Then Climb or Fall if any snake or ladder is encountered
-			if (canClimb)
+			if (ClimborFall)
 			{
-				manager.players[turn].playerSprite.setPosition(manager.players[turn].lerp(manager.players[turn].startPlayerPosition, manager.players[turn].finalPlayerPosition, percent));
+				_manager.players[turn].playerSprite.setPosition(_manager.players[turn].lerp(_manager.players[turn].startPlayerPosition, _manager.players[turn].finalPlayerPosition, percent));
 				if (percent > 0.99f)
 				{
-					manager.players[turn].playerSprite.setPosition(manager.players[turn].finalPlayerPosition);
-					manager.players[turn].startPlayerPosition = manager.players[turn].finalPlayerPosition;
+					_manager.players[turn].playerSprite.setPosition(_manager.players[turn].finalPlayerPosition);
+					_manager.players[turn].startPlayerPosition = _manager.players[turn].finalPlayerPosition;
 
 					//reset
 					elaspedTime = 0.00f;
 					percent = 0;
 					canClick = true;
 					isRolling = false;
-					canClimb = false;
+					ClimborFall = false;
 
-					turn++;
+					turn++; // //switch turn
 					if (turn > 3) turn = 0;
+					_manager.SetTurnArrow(turn);
+					_manager.displayArrow = true;
 				}
 			}
-
-		
 		}
 
 		// ----------------------------------------------------------------------------------------------------
 
-		window.clear(sf::Color(54, 54, 54, 255));
+		window.clear();
 
-		window.draw(bgSprite);
+		window.draw(_board.bgSprite);
 		window.draw(_board.boardSprite);
 		_diceRollBtn.UpdateColor(window);
 		_diceRollBtn.RenderButton(window);
+		window.draw(_dice.diceAnimSprite);
+		if (_manager.displayArrow) window.draw(_manager.arrowSprite);
 
 		for (int i = 0; i < 4; i++) //draw 4 players
 		{
-			window.draw(manager.players[i].playerSprite);
+			window.draw(_manager.players[i].playerSprite);
 		}
-	
-		window.draw(_dice.diceAnimSprite);
 
 		window.display();
-
 	}
 
 	return 0;
