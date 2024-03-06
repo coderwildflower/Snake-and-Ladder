@@ -152,7 +152,6 @@
     <ClCompile Include="PlayerControl.cpp" />
     <ClCompile Include="PlayerSwitchControl.cpp" />
     <ClCompile Include="SoundManager.cpp" />
-    <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
@@ -161,7 +160,6 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerSwitch.h" />
     <ClInclude Include="Sound.h" />
-    <ClInclude Include="UI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

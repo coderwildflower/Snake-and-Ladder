@@ -3,7 +3,7 @@
 
 #include "Button.h"
 
-	//Constructor
+//Constructor defination
 Button::Button(float posX, float posY, float width, float height,float btnImgX,float btnImgY, std::string text, sf::Color idleColor, sf::Color hoverColor, sf::Color clickColor, std::string imagePath = "") {
 
 	shape.setSize(sf::Vector2f(width, height));
@@ -12,16 +12,19 @@ Button::Button(float posX, float posY, float width, float height,float btnImgX,f
 	btnHoverColor = hoverColor;
 	btnClickColor = clickColor;
 
-	textFont.loadFromFile("assets/OpenSans-Regular.ttf");
+	textFont.loadFromFile("assets/Cocogoose Pro Regular Trial.tff");
 	btnText.setFont(textFont);
 	btnText.setString(text);
 	btnText.setCharacterSize(15);
 	btnText.setFillColor(sf::Color::Black);
+	btnText.setStyle(sf::Text::Bold);
 
 	//centre align the text inside the button
 	btnText.setPosition(shape.getPosition().x + (shape.getSize().x / 2 - btnText.getGlobalBounds().width / 2),
 		shape.getPosition().y + (shape.getSize().y / 2 - btnText.getGlobalBounds().height / 2));
 
+	btnImgX = posX;
+	btnImgY = posY;
 	if (!imagePath.empty())
 	{
 		if (!btnTexture.loadFromFile(imagePath))
@@ -29,6 +32,7 @@ Button::Button(float posX, float posY, float width, float height,float btnImgX,f
 
 		btnSprite.setTexture(btnTexture);
 		btnSprite.setPosition(btnImgX, btnImgY);
+		btnSprite.setScale(btnSprite.getLocalBounds().width / width/2, btnSprite.getLocalBounds().height / height/3);
 	}
 }
 
@@ -61,5 +65,7 @@ Button::Button(float posX, float posY, float width, float height,float btnImgX,f
 	{
 		window.draw(shape);
 		window.draw(btnText);
-		window.draw(btnSprite);
+		//window.draw(btnSprite);
+	
+	
 	}

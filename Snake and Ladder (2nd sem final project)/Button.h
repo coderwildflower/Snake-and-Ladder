@@ -14,7 +14,7 @@ private:
 	
 public:
 	//constructor
-	Button(float, float , float , float ,float, float, std::string , sf::Color , sf::Color , sf::Color , std::string );
+	Button(float, float, float, float, float, float, std::string, sf::Color, sf::Color, sf::Color, std::string);
 
 	bool isMouseOver(sf::RenderWindow& window);
 	void UpdateColor(sf::RenderWindow& window);
