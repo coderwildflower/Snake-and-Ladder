@@ -1,7 +1,10 @@
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp> //graphisc library
 #include <iostream>
-#include <algorithm>
+#include <algorithm> //for min function
+#include <chrono>   // for std::chrono::milliseconds
+#include <thread>   // for std::this_thread::sleep_for
 
+//custom headers
 #include "Dice.h"
 #include "Button.h"
 #include "Board.h"
@@ -23,12 +26,12 @@ int main()
 	_dice.InitializeDice();
 	int diceNumber = 0;
 
-	//Create Dice Roll Button------------------
+	//Create Dice Roll Button-------------------
 	Button _diceRollBtn(400, 750, 100, 100, 414, 767, "", sf::Color::White, sf::Color::Cyan, sf::Color::Green, "");
 
 	//Create Snake and Ladder board----------------
 	Board _board;
-	_board.InitializeBoard(window);
+	_board.InitializeBoard();
 
 	Sound _sound;
 	_sound.loadAllAudio();
@@ -43,11 +46,12 @@ int main()
 	}
 	_manager.SetTurnArrow(turn);
 	_manager.displayArrow = true;
+	int count = 0;
 
 	float percent = 0.f;
 
 	bool canClick = true;
-	bool isRolling = false;
+	bool diceRolled = false;
 	bool ClimborFall = false;
 
 	//Main Game Loop ------------------------------------------------------------------------------------------
@@ -75,13 +79,19 @@ int main()
 					{
 						_sound.PlayDiceRoll();
 						_manager.displayArrow = false;
-						isRolling = true;
+						diceRolled = true;
 						canClick = false;
 
-						diceNumber = _dice.GetRandomNum(); //get random number
-						//_dice.RollDice(elaspedTime);
+						//diceNumber = _dice.GetRandomNum(); //get random number
+						diceNumber = 4;
 						_dice.diceAnimSprite.setTextureRect(_dice.diceFace[diceNumber - 1]); //set the dice face to the given number
-						_manager.players[turn].setPos(diceNumber);//set the position of the player
+						_manager.players[turn].setPos(diceNumber);//add the dice number to player index to find the target cell 
+						if (_manager.players[turn].setPos(diceNumber) >= 99)
+						{
+							//win game
+							//show player name
+							std::cout<<"CONGRATULATIONS!!! " << _manager.players[turn].playerPosIndex << turn + 1 << " WON THE GAME!!!";
+						}
 
 						std::cout << diceNumber << ": Dice Number";
 						std::cout << "\n";
@@ -100,40 +110,86 @@ int main()
 
 		}
 
-		if (isRolling)
+		if (diceRolled)
 		{
-			elaspedTime += deltaTime;
-
-			percent = elaspedTime / 0.5f;
-			percent = std::min(percent, 1.f); //limit percant from 0 to 1
-
-			//First Move normally according to dice roll number-----------------------
-			sf::Vector2f tempPos = BoardCellPosition[_manager.players[turn].playerPosIndex - 1];
-			_manager.players[turn].playerSprite.setPosition(_manager.players[turn].lerp(_manager.players[turn].startPlayerPosition, tempPos, percent));
-
-			if (percent > 0.99f && !ClimborFall)
+			
+			//First Move normally according to dice roll number---------------------------------
+			while (count < diceNumber && !ClimborFall)
 			{
-				_manager.players[turn].playerSprite.setPosition(tempPos); //snap current pos to final pos at the end of percantage
-				_manager.players[turn].startPlayerPosition = tempPos;
+				elaspedTime += deltaTime;
+				percent = elaspedTime / 0.3f;
+				percent = std::min(percent, 1.f);  //limit percant from 0 to 1
 
-				elaspedTime = 0.00f;
-				percent = 0;
+				sf::Vector2f tempPos = BoardCellPosition[_manager.players[turn].currentIndex];
+				_manager.players[turn].playerSprite.setPosition(_manager.players[turn].lerp(_manager.players[turn].startPlayerPosition, tempPos, percent));
 
-				_manager.players[turn].finalPlayerPosition = _manager.players[turn].finalPos(_board); //set x and y of target cell
-
-				if (_manager.players[turn].foundLadder) // check if snake or ladder is found
+				if (percent > 0.8f)
 				{
-					_sound.PlayLadder();
-					ClimborFall = true;
+					_manager.players[turn].playerSprite.setPosition(tempPos); //snap current pos to final pos at the end of percantage
+					_sound.PlayPlyaerMove();
+
+					//reset percantage
+					elaspedTime = 0.00f;
+					percent = 0;
+
+					count++;
+					_manager.players[turn].currentIndex++;
+					_manager.players[turn].startPlayerPosition = tempPos; //once reached to target cell assign the target cell to the startpos so it lerps from prev pos
 				}
-				else if (_manager.players[turn].foundSnake)
+			
+
+				if (count == diceNumber) //check sbake and ladder on last index
 				{
-					_sound.PlaySnake();
-					ClimborFall = true;
+					_manager.players[turn].finalPlayerPosition = _manager.players[turn].finalPos(_board); //set snake or ladder pos
+
+					if (_manager.players[turn].foundLadder)
+					{
+						_sound.PlayLadder();
+						ClimborFall = true;
+						_manager.players[turn].currentIndex = _manager.players[turn].playerPosIndex;
+					}
+					else if (_manager.players[turn].foundSnake)
+					{
+						_sound.PlaySnake();
+						ClimborFall = true;
+						_manager.players[turn].currentIndex = _manager.players[turn].playerPosIndex;
+					}
+					else {
+						canClick = true;
+						diceRolled = false;
+
+						turn++; //switch turn
+						if (turn > 3) turn = 0;
+						_manager.SetTurnArrow(turn);
+						_manager.displayArrow = true;
+					}
+					count = 0;
+				
 				}
-				else {
+
+				goto Render; // render screen in each loop
+			}
+
+
+			//Then Climb or Fall if any snake or ladder is encountered
+			if(ClimborFall)
+			{
+				elaspedTime += deltaTime;
+				percent = elaspedTime / 0.4f;
+				percent = std::min(percent, 1.f);
+
+				_manager.players[turn].playerSprite.setPosition(_manager.players[turn].lerp(_manager.players[turn].startPlayerPosition, _manager.players[turn].finalPlayerPosition, percent));
+				if (percent > 0.99f)
+				{
+					_manager.players[turn].playerSprite.setPosition(_manager.players[turn].finalPlayerPosition);
+					_manager.players[turn].startPlayerPosition = _manager.players[turn].finalPlayerPosition;
+
+					//reset all values
+					elaspedTime = 0.00f;
+					percent = 0;
 					canClick = true;
-					isRolling = false;
+					diceRolled = false;
+					ClimborFall = false;
 
 					turn++; //switch turn
 					if (turn > 3) turn = 0;
@@ -142,33 +198,10 @@ int main()
 				}
 
 			}
-
-			//Then Climb or Fall if any snake or ladder is encountered
-			if (ClimborFall)
-			{
-				_manager.players[turn].playerSprite.setPosition(_manager.players[turn].lerp(_manager.players[turn].startPlayerPosition, _manager.players[turn].finalPlayerPosition, percent));
-				if (percent > 0.99f)
-				{
-					_manager.players[turn].playerSprite.setPosition(_manager.players[turn].finalPlayerPosition);
-					_manager.players[turn].startPlayerPosition = _manager.players[turn].finalPlayerPosition;
-
-					//reset
-					elaspedTime = 0.00f;
-					percent = 0;
-					canClick = true;
-					isRolling = false;
-					ClimborFall = false;
-
-					turn++; // //switch turn
-					if (turn > 3) turn = 0;
-					_manager.SetTurnArrow(turn);
-					_manager.displayArrow = true;
-				}
-			}
 		}
-
 		// ----------------------------------------------------------------------------------------------------
 
+	Render:
 		window.clear();
 
 		window.draw(_board.bgSprite);

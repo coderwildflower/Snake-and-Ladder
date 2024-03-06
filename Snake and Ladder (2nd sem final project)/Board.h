@@ -21,8 +21,8 @@ public:
 	sf::Vector2f SnakeInitialPosition[8];
 	sf::Vector2f SnakeFinalPosition[8];
 
-	void SetGridCells(sf::RenderWindow& window);
-	void InitializeBoard(sf::RenderWindow& window);
+	void SetGridCells();
+	void InitializeBoard();
 	sf::Sprite boardSprite;
 	sf::Texture bgTexture;
 	sf::Sprite bgSprite;

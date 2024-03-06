@@ -5,6 +5,7 @@
 class Player {
 public:
 	int playerPosIndex;
+	int currentIndex = 0;
 	int setPos(int);
 	bool foundSnake;
 	bool foundLadder;

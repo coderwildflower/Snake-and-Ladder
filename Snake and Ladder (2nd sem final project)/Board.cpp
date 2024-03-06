@@ -2,18 +2,18 @@
 
 sf::Vector2f BoardCellPosition[100];
 
-void Board::SetGridCells(sf::RenderWindow& window)
+void Board::SetGridCells() // assign x and y of cells from 1 to 100
 {
 	initialX = 170;
 	initialY = 680;
 	index = 0;
 	bool isReverse = false;
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 10; i++) 
 	{
 		for (int j = 0; j < 10; j++)
 		{
-			if (index % 10 != 0) //dont move x on last cell
+			if (index % 10 != 0) //dont increase x on last cell
 			{
 				if (!isReverse)
 					initialX += 70;
@@ -29,7 +29,7 @@ void Board::SetGridCells(sf::RenderWindow& window)
 	}
 }
 
-void Board::InitializeBoard(sf::RenderWindow& window)
+void Board::InitializeBoard()
 {
 	//Set board's texutre,its height and width and position in window -------------------------------------------------------------------
 	bgTexture.loadFromFile("assets/textures/background.png");
@@ -46,9 +46,9 @@ void Board::InitializeBoard(sf::RenderWindow& window)
 	boardSprite.setScale(boardWidth / boardSprite.getLocalBounds().width, boardHeight / boardSprite.getLocalBounds().height);
 	boardSprite.setPosition(450 - boardWidth / 2, 20);
 
-	SetGridCells(window);
+	SetGridCells();
 
-	//set ladder x and y position
+	//set snake and ladder's x and y position
 	for (int i = 0; i < 8; i++)
 	{
 		ladderInitialPosition[i] = BoardCellPosition[ladderInitialIndex[i]];

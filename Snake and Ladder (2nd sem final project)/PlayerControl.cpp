@@ -70,11 +70,6 @@ int ::Player::setPos(int diceNum)
 	return playerPosIndex;
 }
 
-void SimpleMove()
-{
-	
-}
-
 sf::Vector2f Player::finalPos(Board& _board)
 {
 	sf::Vector2f pos;
@@ -113,5 +108,3 @@ sf::Vector2f Player::finalPos(Board& _board)
 sf::Vector2f Player::lerp(const sf::Vector2f& start, const sf::Vector2f& end, float percent) {
 	return start + (end - start) * percent;
 }
-
-
