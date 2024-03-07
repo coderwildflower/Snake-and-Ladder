@@ -30,9 +30,9 @@ int main()
 	bool canPlay = false;
 	Button _diceRollBtn(400, 750, 100, 100, 414, 767, "", sf::Color::White, sf::Color::Cyan, sf::Color::Green, "");
 
-	Button PlayBtn(350, 300, 200, 50, 414, 767, "PLAY", sf::Color::White, sf::Color::Cyan, sf::Color::Green, "assets/textures/button.png");
-	Button OptionsBtn(350, 400, 200, 50, 414, 767, "OPTIONS", sf::Color::White, sf::Color::Cyan, sf::Color::Green, "assets/textures/button.png");
-	Button ExitBtn(350, 500, 200, 50, 414, 767, "QUIT", sf::Color::White, sf::Color::Cyan, sf::Color::Green, "assets/textures/button.png");
+	Button PlayBtn(350, 300, 200, 50, 414, 767, "PLAY", sf::Color::White, sf::Color::Cyan, sf::Color::Green, "");
+	Button OptionsBtn(350, 400, 200, 50, 414, 767, "OPTIONS", sf::Color::White, sf::Color::Cyan, sf::Color::Green, "");
+	Button ExitBtn(350, 500, 200, 50, 414, 767, "QUIT", sf::Color::White, sf::Color::Cyan, sf::Color::Green, "");
 
 	//Create Snake and Ladder board----------------
 	Board _board;
@@ -108,7 +108,7 @@ int main()
 								//win game
 								//show player name
 								isGameover = true;
-								std::cout << "CONGRATULATIONS!!! PLAYER " << turn << " WON THE GAME!!!" << std::endl;
+								std::cout << "CONGRATULATIONS!!! PLAYER " << turn + 1 << " WON THE GAME!!!" << std::endl;
 								_sound.PlayVictory();
 							}
 
@@ -128,7 +128,7 @@ int main()
 
 			if (diceRolled)
 			{
-				ShowWinnerName("p");
+				
 				//First Move normally according to dice roll number---------------------------------
 				while (count < diceNumber && !ClimborFall)
 				{

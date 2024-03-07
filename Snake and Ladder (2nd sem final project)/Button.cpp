@@ -12,7 +12,7 @@ Button::Button(float posX, float posY, float width, float height,float btnImgX,f
 	btnHoverColor = hoverColor;
 	btnClickColor = clickColor;
 
-	textFont.loadFromFile("assets/Cocogoose Pro Regular Trial.tff");
+	textFont.loadFromFile("assets/Cocogoose Pro Regular Trial.ttf");
 	btnText.setFont(textFont);
 	btnText.setString(text);
 	btnText.setCharacterSize(15);
@@ -65,7 +65,5 @@ Button::Button(float posX, float posY, float width, float height,float btnImgX,f
 	{
 		window.draw(shape);
 		window.draw(btnText);
-		//window.draw(btnSprite);
-	
-	
+		window.draw(btnSprite);
 	}
